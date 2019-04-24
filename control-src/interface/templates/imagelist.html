@@ -1,0 +1,11 @@
+<form action="/imagedownloadall" method="GET" style="padding:2em;"  >
+    <input type="submit" value="Download All (zipped)" class="tallbutton" />
+</form>
+
+<ul>
+
+    {% for file in files %}
+        <li><a href="/imagedownload/{{ file['id'] }}" target="blank">{{ file['path'] }}</a></li>
+    {% endfor %}
+
+</ul>

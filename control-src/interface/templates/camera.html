@@ -1,0 +1,132 @@
+<table style="width:100%;">
+
+    <tr>
+        <td class="headtd" style="width:50%">
+            <h3>Live Stream</h3>
+        </td>
+        <td class="headtd" style="width:50%">
+            <h3>Configure Camera</h3>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center"><img src="http://{{ ipaddress }}:8081" style="width: 80%" /></td>
+        <td>
+
+
+            <table style="width:100%">
+
+                <tr>
+
+            {% for  setting in camerasettings %}
+
+            <td>
+
+            <h4>{{ setting['label'] }}</h4>
+            <button id="{{ setting['command'] }}_minus10" onclick="adjustValue('{{ setting['command'] }}',-10,{{ setting['min'] }},{{ setting['max'] }})" {% if setting['auto-state'] == 'true' %} disabled="disabled" {% endif %}>-10</button>
+            <button id="{{ setting['command'] }}_minus1"  onclick="adjustValue('{{ setting['command'] }}',-1,{{ setting['min'] }},{{ setting['max'] }})" {% if setting['auto-state'] == 'true' %} disabled="disabled" {% endif %}>-1</button>
+            <input type="number" min="{{ setting['min'] }}" max="{{ setting['max'] }}" value="{{ setting['value'] }}" id="{{ setting['command'] }}_val" {% if setting['auto-state'] == 'true' %} disabled="disabled" {% endif %} style="width:25%" oninput="updateValue(value)" />
+            <button id="{{ setting['command'] }}_plus1" onclick="adjustValue('{{ setting['command'] }}',1,{{ setting['min'] }},{{ setting['max'] }})" {% if setting['auto-state'] == 'true' %} disabled="disabled" {% endif %}>+1</button>
+            <button id="{{ setting['command'] }}_plus10" onclick="adjustValue('{{ setting['command'] }}',10,{{ setting['min'] }},{{ setting['max'] }})" {% if setting['auto-state'] == 'true' %} disabled="disabled" {% endif %}>+10</button>
+            <button id="{{ setting['command'] }}_reset" onclick="resetValue('{{ setting['command'] }}', '{{ setting['default'] }}')">reset</button>
+
+            {% if setting['auto'] == '' %}{% else %}
+
+                <br /><br />
+
+            <label><input type="checkbox" id="{{setting['command']}}_auto" style="width: 20px;" {% if setting['auto-state'] == 'true' %}checked="checked"{%endif%} onclick="setAuto('{{setting['command']}}')">Auto</label>
+
+            {%endif%}
+
+            </td>
+
+                    {% if loop.index % 2 == 0 %}
+
+                </tr><tr>
+                    {%endif%}
+
+            {% endfor %}
+
+                </tr>
+                </table>
+
+
+        </td>
+    </tr>
+</table>
+
+
+
+<script>
+
+function setAuto(name)
+{
+    value = document.querySelector('#' + name + '_auto').checked;
+
+    if (value)
+    {
+        document.getElementById(name + "_minus10").disabled = true;
+        document.getElementById(name + "_minus1").disabled = true;
+        document.getElementById(name + "_plus1").disabled = true;
+        document.getElementById(name + "_plus10").disabled = true;
+        document.getElementById(name + "_val").disabled = true;
+        document.getElementById(name + "_reset").disabled = true;
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/setcameraauto/" + name + "/true", true);
+        xhttp.send();
+    } else {
+
+        document.getElementById(name + "_minus10").disabled = false;
+        document.getElementById(name + "_minus1").disabled = false;
+        document.getElementById(name + "_plus1").disabled = false;
+        document.getElementById(name + "_plus10").disabled = false;
+        document.getElementById(name + "_val").disabled = false;
+        document.getElementById(name + "_reset").disabled = false;
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/setcameraauto/" + name + "/false", true);
+        xhttp.send();
+    }
+}
+
+
+
+function adjustValue(name, incr, min, max)
+{
+    var value = document.getElementById(name + "_val").value;
+    var increment = +incr;
+
+    newval = +value + increment;
+    if(newval < min)
+    {
+        newval = min;
+    }
+
+    if(newval > max)
+    {
+        newval=max;
+    }
+
+    document.getElementById(name + "_val").value=newval;
+    updateValue(name, newval);
+}
+
+function updateValue(name, val){
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/setcameravalue/" + name + "/" + val, true);
+        xhttp.send();
+    }
+
+function resetValue(name, default_val)
+{
+    document.getElementById(name + "_val").value=default_val;
+    updateValue(name, default_val);
+}
+
+
+
+
+
+
+
+</script>

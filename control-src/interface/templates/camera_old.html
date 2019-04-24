@@ -1,0 +1,139 @@
+<table style="width:100%;">
+
+    <tr>
+        <td class="headtd" style="width:50%">
+            <h3>Live Stream</h3>
+        </td>
+        <td class="headtd" style="width:50%">
+            <h3>Configure Camera</h3>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center"><img src="http://{{ ip }}:8081" style="width: 80%" /></td>
+        <td>
+
+
+
+            <h4>Camera Focus</h4>
+            {% if cameraconfig['autofocus'] == 'true' %}
+
+            <button id="minus10" onclick="focusAdjust(-10)" disabled="disabled">-10</button>
+            <button id="minus1"  onclick="focusAdjust(-1)" disabled="disabled">-1</button>
+
+<input type="number" min="0" max="100" value="{{ cameraconfig['focus'] }}" id="focusVal" disabled="disabled" style="width:25%" oninput="updateFocus(value)" />
+
+            <button id="plus1" onclick="focusAdjust(1)" disabled="disabled">+1</button>
+            <button id="plus10" onclick="focusAdjust(10)" disabled="disabled">+10</button>
+
+            <br /><br />
+
+            <label><input type="checkbox" id="autofocus" checked="checked" onclick="setAutofocus()" style="width: 20px;">Autofocus</label>
+
+            {% else %}
+
+            <button id="minus10" onclick="focusAdjust(-10)">-10</button>
+            <button id="minus1"  onclick="focusAdjust(-1)">-1</button>
+
+<input type="number" min="0" max="100" value="{{ cameraconfig['focus'] }}" id="focusVal" style="width:25%" oninput="updateFocus(value)" />
+
+            <button id="plus1" onclick="focusAdjust(1)">+1</button>
+            <button id="plus10" onclick="focusAdjust(10)">+10</button>
+
+            <br /><br />
+
+            <label><input type="checkbox" id="autofocus" onclick="setAutofocus()" style="width: 20px;">Autofocus</label>
+
+            {% endif %}
+
+
+
+        </td>
+    </tr>
+</table>
+
+
+
+<script>
+
+function setAutofocus()
+{
+    value = document.querySelector('#autofocus').checked;
+
+    if (value)
+    {
+        document.getElementById("minus10").disabled = true;
+        document.getElementById("minus1").disabled = true;
+        document.getElementById("plus1").disabled = true;
+        document.getElementById("plus10").disabled = true;
+        document.getElementById("focusVal").disabled = true;
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/setautofocus/true", true);
+        xhttp.send();
+    } else {
+
+        document.getElementById("minus10").disabled = false;
+        document.getElementById("minus1").disabled = false;
+        document.getElementById("plus1").disabled = false;
+        document.getElementById("plus10").disabled = false;
+        document.getElementById("focusVal").disabled = false;
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/setautofocus/false", true);
+        xhttp.send();
+    }
+
+}
+
+function focusAdjust(incr)
+{
+    var value = document.getElementById("focusVal").value;
+    var increment = +incr;
+
+
+        newval = +value + increment;
+
+        if(newval < 0)
+        {
+            newval = 0;
+        }
+
+        if(newval > 100)
+        {
+            newval=100;
+        }
+
+        document.getElementById("focusVal").value=newval;
+        updateFocus(newval);
+
+}
+
+function focusDown()
+{
+    var value = document.getElementById("focusVal").value;
+    if(value > 0)
+    {
+        newval = +value - 1;
+        document.getElementById("focusVal").value=newval;
+        updateFocus(newval);
+    }
+}
+
+function focusUp()
+{
+    var value = document.getElementById("focusVal").value;
+    if(value < 21)
+    {
+        newval = +value + 1;
+        document.getElementById("focusVal").value=newval;
+        updateFocus(newval);
+    }
+}
+
+    function updateFocus(foc){
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/setfocus/" + foc, true);
+        xhttp.send();
+    }
+
+</script>

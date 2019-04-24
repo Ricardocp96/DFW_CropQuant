@@ -1,0 +1,91 @@
+<h2>Running CropQuant Experiment</h2>
+
+<table class="layouttable" style="width: 100%;table-layout: fixed;">
+
+
+    <tr><td class="headtd"><h3>Experiment Setup</h3></td></tr>
+
+
+<tr>
+    <td style="vertical-align: top;">
+
+
+<form action="/experiment" method="POST">
+<table id="experimentparams" class="display compact" cellspacing="0" width="100%">
+    <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+    <tbody>
+    <tr><td colspan="2" style="font-weight: bold">Settings</td></tr>
+    <tr><td>Experiment Name</td><td><input type="text" value="{{ data['experiment'] }}" name="experiment" /></td></tr>
+    <tr><td>Device ID</td><td><input type="text" value="{{ data['deviceid'] }}" name="deviceid" /></td></tr>
+    <tr><td>Replicate</td><td><input type="text" value="{{ data['replicate'] }}" name="replicate" /></td></tr>
+    <!--<tr><td>Duration</td><td><input type="text" value="{{ data['duration'] }}" name="duration" /></td></tr>
+    <tr><td>End Date</td><td>{{ data['endtime'] }}</td></tr>
+    <tr><td>Current Image ID</td><td>{{ data['imageid'] }}</td></tr>-->
+
+    <tr><td colspan="2" style="font-weight: bold; border-top: 1px solid black">Schedule</td></tr>
+    <tr><td>Image Capture (times per hour)</td><td><input type="text" value="{{ data['imageschedule'] }}" name="schedule_image" /></td></tr>
+    <tr><td>Environment Data (times per hour)</td><td><input type="text" value="{{ data['sensorschedule'] }}" name="schedule_sensor" /></td></tr>
+
+    <tr><td></td><td><input type="submit" value="Save Changes" /></td></tr>
+    </tbody>
+</table>
+
+</form>
+
+
+    </td>
+
+    <!--<td style="vertical-align: top;">
+
+<form action="/stream" method="GET">
+<table id="livestream" class="display compact" cellspacing="0" width="100%">
+
+    <tbody>
+    <tr><td>
+
+    {% if stream == 'True' %}
+        <input type="submit" value="Stop Stream" />
+    {% else %}
+        <input type="submit" value="Start Stream" />
+    {% endif %}
+
+    </td></tr>
+    <tr><td style="text-align: center"><img src="http://{{ ip }}:8081" style="width: 80%" /></td></tr>
+    </tbody>
+</table>
+
+</form>
+
+
+</td>-->
+
+
+</tr>
+
+</table>
+<script>
+
+var schedulefields = {{data['overviewschedule']|length}}
+
+function addtime(){
+schedulefields += 1;
+var schedulecell = document.getElementById('schedulecell');
+schedulecell.insertAdjacentHTML('beforeend', '<input type="time" style="margin-bottom: 5px;" name="overview' + schedulefields + '" />');
+}
+
+$(document).ready(function() {
+    $('#experimentparams').DataTable( {
+        "paging":   false,
+        "ordering": false,
+        "info":     false,
+        "searching":false
+    } );
+
+    $('#livestream').DataTable( {
+        "paging":   false,
+        "ordering": false,
+        "info":     false,
+        "searching":false
+    } );
+} );
+</script>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <style>@font-face
+{
+font-family: customfont;
+src: url('{{ font }}');
+}</style>
+
+    <link rel="stylesheet" href="{{ css }}">
+    <link rel="stylesheet" href="{{ datatablescss }}">
+    <script type="text/javascript" src="{{ jquery }}"></script>
+    <script type="text/javascript" src="{{ datatables }}"></script>
+    <script type="text/javascript" src="{{ d3 }}"></script>
+    <title>CropQuant Web Interface</title>
+</head>
+<body>
+
+<div id="wrapper">
+
+<div id="header">
+    <div id="logos">
+        <a href="/"><img src="{{ ei }}" id="eilogo" alt="Earlham Institute"/></a>
+        <a href="/"><img src="{{ jic }}" id="jiclogo" alt="John Innes Center"/></a>
+    </div>
+
+<a href="/"><img src="{{ logo }}" id="cqlogo" alt="CropQuant"/></a>
+
+</div>
+
+
+
+<div id="content">
+
+<h2>System Offline</h2>
+
+</div>
+
+<div id="footer">
+
+    <table style="width: 100%"><tr><td style="text-align: left;">Crop Phenomics Group</td><td style="text-align: right;">CropQuant 2017</td></tr>
+    <tr><td style="text-align: left; font-size: small;">Dr. J. Zhou, Dr. D. Reynolds</td><td></td></tr></table>
+
+
+</div>
+</div>
+</body>
+</html>

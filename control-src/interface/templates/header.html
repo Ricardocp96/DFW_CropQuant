@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <style>@font-face
+{
+font-family: customfont;
+src: url('{{ font }}');
+}</style>
+
+    <link rel="stylesheet" href="{{ css }}">
+    <link rel="stylesheet" href="{{ datatablescss }}">
+    <script type="text/javascript" src="{{ jquery }}"></script>
+    <script type="text/javascript" src="{{ datatables }}"></script>
+    <script type="text/javascript" src="{{ d3 }}"></script>
+    <title>CropQuant Web Interface</title>
+</head>
+<body>
+
+<div id="wrapper">
+
+<div id="header">
+    <div id="logos">
+        <a href="/"><img src="{{ ei }}" id="eilogo" alt="Earlham Institute"/></a>
+        <a href="/"><img src="{{ jic }}" id="jiclogo" alt="John Innes Center"/></a>
+    </div>
+
+<a href="/"><img src="{{ logo }}" id="cqlogo" alt="CropQuant"/></a>
+
+</div>
+
+<div class="navbar">
+<table><tr>
+    <td><a href="/experiment">Experiment</a></td>
+    <td><a href="/camera">Camera</a></td>
+    <td><a href="/system">System</a></td>
+
+    {% if sensors == 'true' %}
+    <td><a href="/sensor">Sensors</a></td>
+    {% endif %}
+
+
+</tr></table>
+</div>
+
+<div id="content">
+
+

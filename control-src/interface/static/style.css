@@ -1,0 +1,140 @@
+
+
+body{
+font-family: 'customfont', Times, serif;
+color: #3f3f3f;
+}
+
+
+
+#header {
+
+    color: white;
+    text-align: right;
+    padding: 5px;
+}
+
+.headtd{
+background-color: #eee;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+#graphbox
+{
+	margin: 10px;
+	border: 1px solid grey;
+}
+
+input{
+width: 100%;
+}
+
+h3{
+text-align: center;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: steelblue;
+  stroke: steelblue;
+}
+
+.it{
+ font-style: italic;
+}
+
+.tick line{
+    opacity: 0.2;
+  }
+
+.focus rect {
+  fill: white;
+  stroke: steelblue;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+#experimentparams{
+}
+
+#header h1{
+text-align: right;
+color: white;
+font-size: 4em;
+margin: 0px;
+}
+
+#footer {
+text-align: right;
+padding: 5px;
+color: #0A730A;
+border-top: 1px solid #8CDC8C;
+border-bottom: 1px solid #8CDC8C;
+
+}
+
+.layouttable{
+width: 100%;
+table-layout: fixed;
+}
+
+.layouttable td{
+valign: top;
+}
+
+.tallbutton{
+height: 4em;
+}
+
+#eilogo {
+height: 4em;
+}
+
+#cqlogo {
+height: 5em;
+}
+
+
+.bold{
+font-weight: bold;
+}
+
+#jiclogo {
+height: 4em;
+margin-left: 10px;
+}
+
+#logos{
+float: left;
+}
+
+.navbar{
+border-top: 1px solid #0A730A;
+border-bottom: 1px solid #0A730A;
+width: 100%;
+}
+
+.navbar a
+{
+    display:block;
+    text-decoration:none;
+color: #3f3f3f;
+}
+
+.navbar td{
+padding: 5px;
+}

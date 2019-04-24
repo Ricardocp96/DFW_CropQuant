@@ -1,0 +1,218 @@
+<table style="margin-top:5px; float:right;">
+    <tr>
+        <td><form action="/reboot" method="GET"><input type="submit" value="Reboot CropQuant" class="tallbutton" /></form>
+
+</td>
+        <td><form action="/shutdown" method="GET"><input type="submit" value="Shut Down CropQuant" class="tallbutton" /></form></td>
+    </tr>
+</table>
+
+<h2>CropQuant System Status</h2>
+
+<table id="systeminfo" class="display compact" cellspacing="0" width="100%">
+    <thead><tr><th></th><th></th><th></th><th></th><th></th><th></th></tr></thead>
+    <tbody>
+    <tr><td class="bold">Kernel</td><td>{{ status['kernel'] }}</td><td class="bold">Distribution</td><td>{{ status['distro'] }}</td><td class="bold">Device ID</td><td>{{ status['hostname'] }}</td></tr>
+     <tr><td class="bold">Uptime</td><td>{{ status['uptime'] }}</td><td class="bold">IP Address</td><td>{{ status['ipaddress'] }}</td><td class="bold">MAC Address</td><td>{{ status['macaddress'] }}</td></tr>
+    <tr><td class="bold">Memory Used</td><td>{{ status['memuse'] }}%</td><td class="bold">CPU Used</td><td>{{ status['cpuuse'] }}%</td><td class="bold">CPU Temp</td><td>{{ status['cputemp'] }}</td></tr>
+    <tr><td class="bold">Latest Image</td><td>{{ status['latestimage'] }}</td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+</table>
+
+<h3>Storage</h3>
+
+<table id="storageinfo" class="display compact" cellspacing="0">
+    <thead><tr>
+        <th>Mountpoint</th><th>Total Space</th><th>Free Space</th><th>Used</th>
+    </tr></thead>
+    <tbody>
+    {% for store in status['storage'] %}
+    <tr><td>{{ store['mountpoint'] }}</td><td>{{ store['total'] }} MB</td><td>{{ store['available'] }} MB</td><td> {{ ((100 -(100.0/(store['total']|float))*(store['available']|float)))|round(2) }}% </td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+
+<h1>System Usage History</h1>
+
+<div class="navbar">
+<table><tr>
+{% for key, value in graphinfo.items() %}
+    <td><a href="/system/{{ value['slug'] }}">{{ value['link'] }}</a></td>
+    {% endfor %}
+</tr></table>
+</div>
+
+
+<h2>{{ graphinfo[selectedgraph]['title'] }}</h2>
+
+<div id="graphbox"></div>
+
+<script>
+
+Date.createFromMysql = function(mysql_string)
+{
+   var t, result = null;
+   if( typeof mysql_string === 'string' )
+   {
+      t = mysql_string.split(/[- :]/);
+      result = new Date(t[0], t[1] - 1, t[2], t[3] || 0, t[4] || 0, t[5] || 0);
+   }
+   return result;
+}
+
+var data = [];
+
+{% for row in graphdata %}
+    data.push( [ Date.createFromMysql("{{row[0]}}"),{{row[1]}} ])
+{% endfor %}
+
+
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+width = d3.select("#graphbox").node().getBoundingClientRect().width - margin.left - margin.right -20;
+
+var formatDate = d3.time.format("%d-%b-%y");
+
+var x = d3.time.scale()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+xAxis = xAxis.innerTickSize(-height)
+    .outerTickSize(0)
+    .tickPadding(10);
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .innerTickSize(-width)
+    .outerTickSize(0)
+    .tickPadding(10);
+
+var line = d3.svg.line()
+	.interpolate("cardinal")
+    .x(function(d) { return x(d[0]); })
+    .y(function(d) { return y(d[1]); });
+
+line.defined(function(d) { return !isNaN(d[1]); });
+
+var bisectDate = d3.bisector(function(d) { return d[0]; }).left
+
+var graphsvg = d3.select("#graphbox").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  x.domain(d3.extent(data, function(d) { return d[0]; }));
+  y.domain([0,d3.max(data, function(d) { return d[1]+1; })]);
+
+  graphsvg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .style("text-anchor", "end")
+      .attr("x", width-20)
+      .attr("y", -6)
+      .text("Date/Time");
+
+
+  graphsvg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("{{ graphinfo[selectedgraph]['title'] }}");
+
+  graphsvg.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line);
+
+
+	var focus = graphsvg.append("g")
+      .attr("class", "focus")
+      .style("display", "none");
+
+  focus.append("circle")
+      .attr("r", 4.5);
+
+  focus.append("rect")
+      .attr("width", 60)
+      .attr("height", 20)
+      .attr("x", 7)
+      .attr("y", -10);
+
+  focus.append("text")
+      .attr("x", 9)
+      .attr("dy", ".35em");
+
+
+  graphsvg.append("rect")
+      .attr("class", "overlay")
+      .attr("width", width)
+      .attr("height", height)
+      .on("mouseover", function() { focus.style("display", null); })
+      .on("mouseout", function() { focus.style("display", "none"); })
+      .on("mousemove", mousemove);
+
+  function mousemove() {
+
+  var format = d3.time.format("%d/%m/%y - %H:%M");
+
+    var x0 = x.invert(d3.mouse(this)[0]),
+        i = bisectDate(data, x0, 1),
+        d0 = data[i - 1],
+        d1 = data[i],
+        d = x0 - d0[0] > d1[0] - x0 ? d1 : d0;
+    focus.attr("transform", "translate(" + x(d[0]) + "," + y(d[1]) + ")");
+    focus.select("text").text(d[1] + " {{ graphinfo[selectedgraph]['unit'] }}");
+  }
+
+function type(d) {
+  d[0] = formatDate.parse(d[0]);
+  d[1] = +d[1];
+  return d;
+}
+
+</script>
+
+
+
+
+
+
+
+
+
+<script>
+$(document).ready(function() {
+    $('#systeminfo').DataTable( {
+        "paging":   false,
+        "ordering": false,
+        "info":     false,
+        "searching":false
+    } );
+
+    $('#storageinfo').DataTable( {
+        "paging":   false,
+        "ordering": false,
+        "info":     false,
+        "searching":false
+    } );
+} );
+</script>
+
